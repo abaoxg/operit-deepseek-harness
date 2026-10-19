@@ -1,0 +1,25 @@
+--- dist/shared/deepseek_harness_web_runtime.js	2026-10-19 23:32:00.255234100 +0800
++++ /data/data/com.ai.assistance.operit/files/toolpkg_cache/com.operit.deepseek_harness-e16f787d/dist/shared/deepseek_harness_web_runtime.js	2026-10-19 14:28:34.052999196 +0800
+@@ -245,7 +245,8 @@
+     return [
+         `export HOME=${shellQuote("/root")}`,
+         `export PNPM_HOME=${shellQuote(LINUX_PNPM_HOME)}`,
+-        'export PATH="$PNPM_HOME:$PATH"',
++        'export PATH="/usr/bin:$PNPM_HOME:$PATH"',
++        'export NODE=/usr/bin/node',
+         `export DSH_HOME=${shellQuote(DSH_HOME_DIR)}`,
+         'export BROWSER=/bin/true',
+         `mkdir -p ${shellQuote(LINUX_RUNTIME_DIR)}`,
+@@ -908,7 +909,12 @@
+     ].join("\n");
+ }
+ function buildPnpmBuildApprovalScript() {
++    // pnpm >= 9 aborts EVERY command (including `pnpm init`) with
++    // "ERROR packages field missing or empty" when a pnpm-workspace.yaml exists
++    // but has no `packages` field. Always emit `packages` first.
+     const config = [
++        "packages:",
++        '  - "."',
+         "allowBuilds:",
+         ...DSH_ALLOWED_BUILD_PACKAGES.map((packageName) => `  ${JSON.stringify(packageName)}: true`),
+         "",

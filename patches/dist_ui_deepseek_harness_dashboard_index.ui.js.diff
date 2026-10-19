@@ -1,0 +1,97 @@
+--- dist/ui/deepseek_harness_dashboard/index.ui.js	2026-10-19 23:32:00.255234100 +0800
++++ /data/data/com.ai.assistance.operit/files/toolpkg_cache/com.operit.deepseek_harness-e16f787d/dist/ui/deepseek_harness_dashboard/index.ui.js	2026-10-19 15:18:13.908998059 +0800
+@@ -84,6 +84,84 @@
+         throw error;
+     }
+ }
++const DSH_POPUP_SHIM = `
++(function() {
++  if (window.__dshPopupShimInstalled) { window.__dshPopupShimRefresh && window.__dshPopupShimRefresh(); return; }
++  window.__dshPopupShimInstalled = true;
++  const rawOpen = window.open ? window.open.bind(window) : null;
++
++  function toast(text, url) {
++    try {
++      const id = "dsh-popup-shim-toast";
++      let box = document.getElementById(id);
++      if (!box) {
++        box = document.createElement("div");
++        box.id = id;
++        box.style.cssText = "position:fixed;left:12px;right:12px;bottom:16px;z-index:2147483647;background:#1f2430;color:#fff;border-radius:12px;padding:12px 14px;font-size:13px;line-height:1.6;box-shadow:0 8px 28px rgba(0,0,0,.45);word-break:break-all;";
++        document.body.appendChild(box);
++      }
++      box.textContent = "";
++      const line = document.createElement("div");
++      line.textContent = text;
++      box.appendChild(line);
++      if (url) {
++        const a = document.createElement("a");
++        a.href = url;
++        a.textContent = url;
++        a.target = "_self";
++        a.style.cssText = "color:#7cc4ff;display:block;margin-top:8px;text-decoration:underline;";
++        box.appendChild(a);
++        const btn = document.createElement("button");
++        btn.textContent = "复制授权链接";
++        btn.style.cssText = "margin-top:10px;padding:8px 14px;border-radius:8px;border:0;background:#3b7ddd;color:#fff;font-size:13px;";
++        btn.onclick = function() {
++          try {
++            const ta = document.createElement("textarea");
++            ta.value = url;
++            ta.style.cssText = "position:fixed;left:-9999px;";
++            document.body.appendChild(ta);
++            ta.select();
++            document.execCommand("copy");
++            document.body.removeChild(ta);
++            btn.textContent = "已复制";
++          } catch (e) {
++            btn.textContent = "复制失败，请长按选择";
++          }
++        };
++        box.appendChild(btn);
++      }
++      clearTimeout(window.__dshPopupShimTimer);
++      window.__dshPopupShimTimer = setTimeout(function() {
++        const el = document.getElementById(id);
++        if (el) el.style.display = "none";
++      }, 30000);
++    } catch (e) {}
++  }
++
++  window.open = function(url) {
++    const target = url && String(url).trim() !== "" && String(url) !== "about:blank" ? String(url) : "";
++    if (target) {
++      toast("登录需要在系统浏览器中完成，已为你打开新页面。若未跳转，请点下方链接或复制后在浏览器打开：", target);
++      try { window.location.href = target; } catch (e) {}
++      return null;
++    }
++    toast("登录窗口已被 Operit 内置浏览器拦截（WebView 不支持弹窗，强行弹窗会导致 Operit 闪退）。请在登录框里点「复制链接」，把授权地址粘贴到系统浏览器（如 Via / 夸克）中完成登录，完成后回到这里即可。");
++    return null;
++  };
++  window.__dshPopupShimRefresh = function() {};
++})();
++`;
++
++async function installDshPopupShim(controller) {
++    try {
++        await controller.evaluateJavascript(DSH_POPUP_SHIM);
++        return true;
++    } catch (error) {
++        console.warn("[DSH Sidebar] popup shim injection failed", error);
++        return false;
++    }
++}
++
+ async function applyMobileLayoutCss(controller, assets) {
+     const script = `
+ (function() {
+@@ -1133,7 +1211,8 @@
+                     setProgress(100);
+                     setStatusText("DeepSeek Harness 已就绪");
+                     setPageLoading(false);
+-                    void loadMobileLayoutAssets()
++                    void installDshPopupShim(webViewController)
++                        .then(() => loadMobileLayoutAssets())
+                         .then((assets) => applyMobileLayoutCss(webViewController, assets))
+                         .then(() => {
+                             console.log("[DSH Sidebar] mobile layout CSS applied");

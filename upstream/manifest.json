@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "toolpkg_id": "com.operit.deepseek_harness",
+  "version": "0.7.2",
+  "author": "AAswordsman & luojiaping & 空悲切 & zjxdzh & 芸",
+  "main": "dist/main.js",
+  "logo": "dsh_logo",
+  "display_name": {
+    "zh": "DeepSeek Harness",
+    "en": "DeepSeek Harness",
+    "default": "DeepSeek Harness"
+  },
+  "description": {
+    "zh": "在 Operit 侧边栏中承载本机 DeepSeek Harness Web 界面，并提供服务控制、对话工具和内置 Sub-Agent 监控面板。",
+    "en": "Embeds the local DeepSeek Harness Web UI with service controls, conversation tools, and a built-in Sub-Agent monitor.",
+    "default": "Embeds the local DeepSeek Harness Web UI with service controls, conversation tools, and a built-in Sub-Agent monitor."
+  },
+  "enabled_by_default": true,
+  "subpackages": [
+    {
+      "id": "deepseek_harness",
+      "entry": "dist/packages/deepseek_harness.js",
+      "enabled_by_default": true,
+      "display_name": {
+        "zh": "DeepSeek Harness",
+        "en": "DeepSeek Harness"
+      },
+      "description": {
+        "zh": "查询、启动、重启和停止本机 DeepSeek Harness Web 服务。",
+        "en": "Inspects, starts, restarts, and stops the local DeepSeek Harness Web service."
+      }
+    },
+    {
+      "id": "deepseek_harness_control",
+      "entry": "dist/packages/deepseek_harness_control.js",
+      "enabled_by_default": true,
+      "display_name": {
+        "zh": "DeepSeek Harness Control",
+        "en": "DeepSeek Harness Control"
+      },
+      "description": {
+        "zh": "通过本机 DeepSeek Harness Web RPC 读取或设置界面主题、管理工作区、创建或复用会话，并发送消息后返回最终回复。",
+        "en": "Read or set the interface theme, manage workspaces, create or reuse a local DeepSeek Harness session, and send messages through Web RPC."
+      }
+    },
+    {
+      "id": "dsh_subagent",
+      "entry": "dist/packages/dsh_subagent.js",
+      "enabled_by_default": false,
+      "display_name": {
+        "zh": "DSH Sub-Agent",
+        "en": "DSH Sub-Agent"
+      },
+      "description": {
+        "zh": "以受限工作区权限调用 DSH headless sub-agent；支持有时限的同步/异步任务、状态查询、监控、已结束任务清理和取消。该高能力子包需显式启用。",
+        "en": "Invoke a DSH headless sub-agent with workspace-scoped permissions; supports bounded sync/async tasks, status, monitoring, terminal-task cleanup, and cancellation. This high-capability subpackage requires explicit enablement."
+      }
+    }
+  ],
+  "resources": [
+    {
+      "key": "dsh_mobile_layout_css",
+      "path": "resource/mobile_optimize.css",
+      "mime": "text/css"
+    },
+    {
+      "key": "dsh_screen_utils_dex",
+      "path": "resource/screen_utils.dex",
+      "mime": "application/vnd.android.dex"
+    },
+    {
+      "key": "dsh_logo",
+      "path": "resource/logo.svg",
+      "mime": "image/svg+xml"
+    }
+  ],
+  "workflow_templates": [],
+  "workspace_templates": []
+}
